@@ -20,6 +20,27 @@ router.post("/",async(req,res)=>{
         res.json({ message: err.message });
     }
 })
+router.put('/:author', async (req, res) => {
+    try {
+      
+        const updatedBlog = await Blog.findOneAndUpdate(
+            { author: req.params.author },  
+            { content: req.body.content },  
+            { new: true } 
+        );
+
+        if (!updatedBlog) {
+            return res.status(404).json({ message: "Blog by this author not found" });
+        }
+
+        
+        res.json(updatedBlog);
+    } catch (err) {
+       
+        res.status(500).json({ message: err.message });
+    }
+});
+
 router.get('/:author', async (req, res) => {
     try {
         const blogs = await Blog.find({ author: req.params.author });
@@ -29,6 +50,18 @@ router.get('/:author', async (req, res) => {
         }
         
         res.json(blogs);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.delete('/:author', async (req, res) => {
+    try {
+         await Blog.deleteOne({ author: req.params.author });
+        
+       
+        
+        res.json({message:"deleted"});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
